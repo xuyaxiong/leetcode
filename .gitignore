@@ -1,2 +1,5 @@
 .vscode
 js/*_failed.js
+yarn.lock
+node_modules
+test.js
