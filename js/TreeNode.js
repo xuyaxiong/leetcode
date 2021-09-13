@@ -5,23 +5,20 @@ function TreeNode(val, left, right) {
 }
 
 function buildBinTreeFromArray(arr) {
-    let res = []
-    const test = []
-    test.push(arr[0])
-    let i = 0
-    while (i < arr.length) {
-        let curr = test.shift()
-        res.push(curr)
-        if (curr) {
-            test.push(arr[++i])
-            test.push(arr[++i])
-        } else {
-            test.push(null)
-            test.push(null)
+    if (!arr || arr.length === 0) return null
+    const nodeList = []
+    for (let i = 0; i < arr.length; ++i) {
+        let tempNode = new TreeNode(arr[i])
+        nodeList.push(tempNode)
+        if (i !== 0) {
+            if (i % 2 === 0) {
+                nodeList[(i / 2) - 1].right = tempNode
+            } else {
+                nodeList[Math.floor(i / 2)].left = tempNode
+            }
         }
     }
-    res.push(...test)
-    console.log(res)
+    return nodeList[0]
 }
 
 // 先序遍历
@@ -78,5 +75,3 @@ module.exports = {
     postorderTraversal,
     levelorderTraversal
 }
-
-buildBinTreeFromArray([1, 2, null, 3, null, 4, null])
