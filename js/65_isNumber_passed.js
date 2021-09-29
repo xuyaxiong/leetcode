@@ -7,6 +7,11 @@ const { equal } = require("assert")
  * @return {boolean}
  */
 const isNumber = function (s) {
+
+    function isNum(ch) {
+        const code = ch.charCodeAt()
+        return code >= 48 && code <= 57
+    }
     class Status {
         constructor(status, name) {
             this.status = status
@@ -20,25 +25,14 @@ const isNumber = function (s) {
         }
 
         digest(ch) {
-            switch (ch) {
-                case '+':
-                case '-':
-                    return new SignStatus()
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    return new IntStatus()
-                case '.':
-                    return new BeforeNullDotStatus()
-                default:
-                    throw new Error('解析错误')
+            if (ch === '+' || ch === '-') {
+                return new SignStatus()
+            } else if (isNum(ch)) {
+                return new IntStatus()
+            } else if (ch === '.') {
+                return new BeforeNullDotStatus()
+            } else {
+                throw new Error('解析错误')
             }
         }
     }
@@ -49,22 +43,12 @@ const isNumber = function (s) {
         }
 
         digest(ch) {
-            switch (ch) {
-                case '.':
-                    return new BeforeNullDotStatus()
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    return new IntStatus()
-                default:
-                    throw new Error('解析错误')
+            if (isNum(ch)) {
+                return new IntStatus()
+            } else if (ch === '.') {
+                return new BeforeNullDotStatus()
+            } else {
+                throw new Error('解析错误')
             }
         }
     }
@@ -75,47 +59,10 @@ const isNumber = function (s) {
         }
 
         digest(ch) {
-            switch (ch) {
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    return new DecStatus()
-                default:
-                    throw new Error('解析错误')
-            }
-        }
-    }
-
-    class DotStatus extends Status { // 小数点状态, 小数点前面有数
-        constructor() {
-            super(-4, '小数点状态')
-        }
-
-        digest(ch) {
-            switch (ch) {
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    return new DecStatus()
-                case 'e':
-                case 'E':
-                    return new EStatus()
-                default:
-                    throw new Error('解析错误')
+            if (isNum(ch)) {
+                return new DecStatus()
+            } else {
+                throw new Error('解析错误')
             }
         }
     }
@@ -126,23 +73,12 @@ const isNumber = function (s) {
         }
 
         digest(ch) {
-            switch (ch) {
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    return new SciStatus()
-                case '+':
-                case '-':
-                    return new SciSignStatus()
-                default:
-                    throw new Error('解析错误')
+            if (ch === '+' || ch === '-') {
+                return new SciSignStatus()
+            } else if (isNum(ch)) {
+                return new SciStatus()
+            } else {
+                throw new Error('解析错误')
             }
         }
     }
@@ -153,20 +89,10 @@ const isNumber = function (s) {
         }
 
         digest(ch) {
-            switch (ch) {
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    return new SciStatus()
-                default:
-                    throw new Error('解析错误')
+            if (isNum(ch)) {
+                return new SciStatus()
+            } else {
+                throw new Error('解析错误')
             }
         }
     }
@@ -177,79 +103,29 @@ const isNumber = function (s) {
         }
 
         digest(ch) {
-            switch (ch) {
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    return new IntStatus()
-                case 'e':
-                case 'E':
-                    return new EStatus()
-                case '.':
-                    return new DecStatus()
-                default:
-                    throw new Error('解析错误')
+            if (isNum(ch)) {
+                return new IntStatus()
+            } else if (ch === 'e' || ch === 'E') {
+                return new EStatus()
+            } else if (ch === '.') {
+                return new DecStatus()
+            } else {
+                throw new Error('解析错误')
             }
         }
     }
-
-    // class BeforeNullDecStatus extends Status {  // 小数状态, 小数点前面没有数
-    //     constructor() {
-    //         super(2, '小数状态')
-    //     }
-
-    //     digest(ch) {
-    //         switch (ch) {
-    //             case '0':
-    //             case '1':
-    //             case '2':
-    //             case '3':
-    //             case '4':
-    //             case '5':
-    //             case '6':
-    //             case '7':
-    //             case '8':
-    //             case '9':
-    //                 return new DecStatus()
-    //             case 'e':
-    //             case 'E':
-    //                 return new EStatus()
-    //             default:
-    //                 throw new Error('解析错误')
-    //         }
-    //     }
-    // }
-
     class DecStatus extends Status {  // 小数状态, 小数点前面有数
         constructor() {
             super(2, '小数状态')
         }
 
         digest(ch) {
-            switch (ch) {
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    return new DecStatus()
-                case 'e':
-                case 'E':
-                    return new EStatus()
-                default:
-                    throw new Error('解析错误')
+            if (isNum(ch)) {
+                return new DecStatus()
+            } else if (ch === 'e' || ch === 'E') {
+                return new EStatus()
+            } else {
+                throw new Error('解析错误')
             }
         }
     }
@@ -260,20 +136,10 @@ const isNumber = function (s) {
         }
 
         digest(ch) {
-            switch (ch) {
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    return new SciStatus()
-                default:
-                    throw new Error('解析错误')
+            if (isNum(ch)) {
+                return new SciStatus()
+            } else {
+                throw new Error('解析错误')
             }
         }
     }
