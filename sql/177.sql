@@ -1,0 +1,6 @@
+CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
+BEGIN
+	DECLARE p INT;
+	SET p = N - 1;
+	RETURN (SELECT ifnull((SELECT DISTINCT Salary FROM Employee ORDER BY Salary DESC LIMIT 1 OFFSET p), null));
+END
